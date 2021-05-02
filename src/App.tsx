@@ -35,6 +35,9 @@ function App() {
         </>
       );
     } else if (appState === AppState.Recording) {
+      // @ts-ignore
+      const { x, y } = webcamPlacementRef.current?.getBoundingClientRect();
+
       return (
         <Record
           permissionDenied={() => {
@@ -46,6 +49,7 @@ function App() {
           }}
           useCam={requestCam}
           useScreen={requestScreen}
+          camPosition={{ x, y }}
         />
       );
     } else if (appState === AppState.PermissionDenied) {

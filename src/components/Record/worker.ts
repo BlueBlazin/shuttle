@@ -1,19 +1,25 @@
+export enum Message {
+  Draw = "DRAW",
+  Stop = "STOP",
+  Start = "START",
+}
+
 export function canvasLoop() {
   // @ts-ignore
   if (captureCanvas) {
     setTimeout(canvasLoop, 100 / 3);
   }
   // @ts-ignore
-  postMessage("DRAW");
+  postMessage(Message.Draw);
 }
 
 export function handleWorkerMessage(msg: { data: string }) {
-  if (msg.data === "STOP") {
+  if (msg.data === Message.Stop) {
     // @ts-ignore
     captureCanvas = false;
   }
 
-  if (msg.data === "START") {
+  if (msg.data === Message.Start) {
     canvasLoop();
   }
 }

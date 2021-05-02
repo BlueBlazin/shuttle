@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-import { canvasLoop, handleWorkerMessage } from "./worker";
+import { canvasLoop, handleWorkerMessage, Message } from "./worker";
 
 const SCREEN_SETTINGS = {
   video: { cursor: "always" },
@@ -14,6 +14,7 @@ type RecordParams = {
   finishRecording: (url: string) => void;
   useCam: boolean;
   useScreen: boolean;
+  camPosition: { x: number; y: number };
 };
 
 function Record({
@@ -21,8 +22,10 @@ function Record({
   finishRecording,
   useCam,
   useScreen,
+  camPosition,
 }: RecordParams) {
   useEffect(() => {
+    console.log(camPosition, window.innerWidth, window.innerHeight);
     const canvas = document.createElement("canvas");
 
     // prettier-ignore
@@ -41,8 +44,6 @@ function Record({
 
     const webcamVideo = document.createElement("video");
 
-    const consoleLog = (msg: string) => console.log(msg);
-
     let chunks: Blob[] = [];
 
     const ctx = canvas.getContext("2d");
@@ -57,19 +58,36 @@ function Record({
 
       ctx?.beginPath();
 
-      const radius = height / 8;
+      // const radius = height / 8;
+      const radius = 100;
 
-      ctx?.arc(radius, height - radius, radius, 0, Math.PI * 2, false);
+      // ctx?.arc(radius, height - radius, radius, 0, Math.PI * 2, false);
+
+      let x = (camPosition.x * canvas.width) / window.innerWidth;
+      let y = (camPosition.y * canvas.height) / window.innerHeight;
+
+      ctx?.arc(x + radius, y + radius, radius, 0, Math.PI * 2, false);
       ctx?.clip();
 
       const aspectRatio = canvas.width / canvas.height;
+      const newHeight = 2 * radius;
+      const newWidth = newHeight * aspectRatio;
+      const newX = x - (newWidth / 2 - radius);
 
+      // ctx?.drawImage(
+      //   webcamVideo,
+      //   radius * (1 - aspectRatio),
+      //   height - 2 * radius,
+      //   aspectRatio * 2 * radius,
+      //   2 * radius
+      // );
       ctx?.drawImage(
         webcamVideo,
-        radius * (1 - aspectRatio),
-        height - 2 * radius,
-        aspectRatio * 2 * radius,
-        2 * radius
+        newX,
+        y,
+        newWidth,
+        // aspectRatio * 2 * radius,
+        newHeight
       );
 
       ctx?.restore();
@@ -88,7 +106,6 @@ function Record({
       const url = URL.createObjectURL(blob);
 
       chunks = [];
-      consoleLog("FINISHED!");
 
       // TEMP CODE
       // const link = document.createElement("a");
@@ -100,7 +117,6 @@ function Record({
     };
 
     const blobCode = `
-      // add globals here
       let captureCanvas = true;
 
       ${canvasLoop}
@@ -139,7 +155,7 @@ function Record({
         }
 
         screenStream.addEventListener("inactive", () => {
-          worker.postMessage("STOP");
+          worker.postMessage(Message.Stop);
           canvasStream.getTracks().forEach((track: any) => track.stop());
           webcamStream.getTracks().forEach((track: any) => track.stop());
           mediaRecorder.stop();
@@ -148,7 +164,7 @@ function Record({
 
         mediaRecorder.start();
 
-        worker.postMessage("START");
+        worker.postMessage(Message.Start);
 
         worker.onmessage = () => {
           drawVideoOnCanvas();
