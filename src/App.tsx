@@ -67,7 +67,9 @@ function App() {
     <div className={styles.container}>
       {renderContent()}
       <div className={styles.github}>
-        <AiFillGithub size="3em" />
+        <a href="https://github.com/BlueBlazin/shuttle">
+          <AiFillGithub size="3em" />
+        </a>
       </div>
     </div>
   );

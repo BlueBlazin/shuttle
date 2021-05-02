@@ -2,6 +2,8 @@
 
 A webapp for recording screen and webcam videos.
 
+![shuttle screenshot](https://raw.githubusercontent.com/BlueBlazin/shuttle/master/shuttle-screenshot.png)
+
 ## Highlights:
 
 - No recording limits
