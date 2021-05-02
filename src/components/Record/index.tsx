@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-import { canvasLoop, handleWorkerMessage, Message } from "./worker";
+import { canvasLoop, handleWorkerMessage } from "./worker";
 
 const SCREEN_SETTINGS = {
   video: { cursor: "always" },
@@ -28,20 +28,7 @@ function Record({
     console.log(camPosition, window.innerWidth, window.innerHeight);
     const canvas = document.createElement("canvas");
 
-    // prettier-ignore
-    // @ts-ignore
-    const screenStreamPromise = navigator.mediaDevices.getDisplayMedia(SCREEN_SETTINGS);
-
-    // prettier-ignore
-    const webcamStreamPromise = navigator.mediaDevices.getUserMedia(WEBCAM_SETTINGS);
-
-    const combinedPromise = Promise.all([
-      screenStreamPromise,
-      webcamStreamPromise,
-    ]);
-
     const screenVideo = document.createElement("video");
-
     const webcamVideo = document.createElement("video");
 
     let chunks: Blob[] = [];
@@ -128,19 +115,29 @@ function Record({
 
     const worker = new Worker(blobUrl);
 
-    combinedPromise
-      .catch(() => {
+    // prettier-ignore
+    // @ts-ignore
+    const screenStreamPromise = navigator.mediaDevices.getDisplayMedia(SCREEN_SETTINGS);
+    // prettier-ignore
+    const webcamStreamPromise = navigator.mediaDevices.getUserMedia(WEBCAM_SETTINGS);
+
+    Promise.all([screenStreamPromise, webcamStreamPromise])
+      .catch((e) => {
         permissionDenied();
       })
-      // @ts-ignore
-      .then(([screenStream, webcamStream]) => {
+      .then((results) => {
+        if (!results) {
+          return;
+        }
+
+        const [screenStream, webcamStream] = results;
+
         screenVideo.srcObject = screenStream;
         webcamVideo.srcObject = webcamStream;
 
         screenVideo.play();
         webcamVideo.play();
 
-        // prettier - ignore;
         const {
           width,
           height,
@@ -155,7 +152,7 @@ function Record({
         }
 
         screenStream.addEventListener("inactive", () => {
-          worker.postMessage(Message.Stop);
+          worker.postMessage("STOP");
           canvasStream.getTracks().forEach((track: any) => track.stop());
           webcamStream.getTracks().forEach((track: any) => track.stop());
           mediaRecorder.stop();
@@ -164,7 +161,7 @@ function Record({
 
         mediaRecorder.start();
 
-        worker.postMessage(Message.Start);
+        worker.postMessage("START");
 
         worker.onmessage = () => {
           drawVideoOnCanvas();
@@ -257,10 +254,10 @@ export default Record;
 //       webcamStreamPromise,
 //     ]);
 
-//     combinedPromise
-//       .catch(() => {
-//         permissionDenied();
-//       })
+// combinedPromise
+//   .catch(() => {
+//     permissionDenied();
+//   })
 //       // @ts-ignore
 //       .then(([screenStream, webcamStream]) => {
 //         if (requestScreen) {
