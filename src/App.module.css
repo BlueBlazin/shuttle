@@ -14,3 +14,7 @@
   cursor: pointer;
   color: #333;
 }
+
+.github a:visited {
+  color: #333;
+}
