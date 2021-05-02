@@ -15,7 +15,19 @@
   color: #333;
 }
 
+.github a {
+  color: #333;
+}
+
 .github a:visited {
+  color: #333;
+}
+
+.github a:active {
+  color: #333;
+}
+
+.github a:hover {
   color: #333;
 }
 
