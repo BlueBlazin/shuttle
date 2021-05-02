@@ -67,8 +67,12 @@ function App() {
     <div className={styles.container}>
       {renderContent()}
       <div className={styles.github}>
-        <a href="https://github.com/BlueBlazin/shuttle">
-          <AiFillGithub size="3em" />
+        <a
+          href="https://github.com/BlueBlazin/shuttle"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <AiFillGithub className={styles["github-icon"]} size="3em" />
         </a>
       </div>
     </div>

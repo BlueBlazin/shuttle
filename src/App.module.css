@@ -18,3 +18,11 @@
 .github a:visited {
   color: #333;
 }
+
+.github-icon {
+  transition: all 50ms;
+}
+
+.github-icon:active {
+  transform: scale(0.9);
+}
