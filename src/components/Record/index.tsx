@@ -25,7 +25,6 @@ function Record({
   camPosition,
 }: RecordParams) {
   useEffect(() => {
-    console.log(camPosition, window.innerWidth, window.innerHeight);
     const canvas = document.createElement("canvas");
 
     const screenVideo = document.createElement("video");
