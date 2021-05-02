@@ -5,6 +5,8 @@ import styles from "./App.module.css";
 import WebcamPlacement from "./components/WebcamPlacement";
 import RecordPanel from "./components/RecordPanel";
 import Record from "./components/Record";
+import PermissionDenied from "./components/PermissionDenied";
+import PostRecord from "./components/PostRecord";
 import { AppState } from "./enums";
 
 function App() {
@@ -12,6 +14,7 @@ function App() {
   const [appState, setAppState] = useState(AppState.PreRecording);
   const [requestCam, setRequestCam] = useState(true);
   const [requestScreen, setRequestScreen] = useState(true);
+  const [url, setUrl] = useState("");
 
   function renderContent() {
     if (appState === AppState.PreRecording) {
@@ -37,17 +40,18 @@ function App() {
           permissionDenied={() => {
             setAppState(AppState.PermissionDenied);
           }}
-          requestCam={requestCam}
-          requestScreen={requestScreen}
+          finishRecording={(url) => {
+            setAppState(AppState.PostRecording);
+            setUrl(url);
+          }}
+          useCam={requestCam}
+          useScreen={requestScreen}
         />
       );
     } else if (appState === AppState.PermissionDenied) {
-      return (
-        <div className={styles["permission-denied-container"]}>
-          <h1>Permission Denied 😅</h1>
-          <h3>No worries! Refresh page to try again.</h3>
-        </div>
-      );
+      return <PermissionDenied />;
+    } else if (appState === AppState.PostRecording) {
+      return <PostRecord url={url} />;
     } else {
       return null;
     }

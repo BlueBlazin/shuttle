@@ -14,16 +14,3 @@
   cursor: pointer;
   color: #333;
 }
-
-.permission-denied-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 500px;
-  height: 300px;
-  flex-direction: column;
-}
-
-.permission-denied-container h3 {
-  font-weight: normal;
-}
