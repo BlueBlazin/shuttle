@@ -1,0 +1,29 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.github {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 15px;
+  cursor: pointer;
+  color: #333;
+}
+
+.permission-denied-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  height: 300px;
+  flex-direction: column;
+}
+
+.permission-denied-container h3 {
+  font-weight: normal;
+}

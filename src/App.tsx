@@ -1,24 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useState } from "react";
+import { AiFillGithub } from "react-icons/ai";
+
+import styles from "./App.module.css";
+import WebcamPlacement from "./components/WebcamPlacement";
+import RecordPanel from "./components/RecordPanel";
+import Record from "./components/Record";
+import { AppState } from "./enums";
 
 function App() {
+  const webcamPlacementRef = useRef<HTMLCanvasElement>(null);
+  const [appState, setAppState] = useState(AppState.PreRecording);
+  const [requestCam, setRequestCam] = useState(true);
+  const [requestScreen, setRequestScreen] = useState(true);
+
+  function renderContent() {
+    if (appState === AppState.PreRecording) {
+      return (
+        <>
+          <RecordPanel
+            requestCam={requestCam}
+            requestScreen={requestScreen}
+            toggleCam={() => {
+              setRequestCam(!requestCam);
+            }}
+            toggleScreen={() => setRequestScreen(!requestScreen)}
+            startRecording={() => setAppState(AppState.Recording)}
+          />
+          {requestCam && (
+            <WebcamPlacement canvasRef={webcamPlacementRef} radius={100} />
+          )}
+        </>
+      );
+    } else if (appState === AppState.Recording) {
+      return (
+        <Record
+          permissionDenied={() => {
+            setAppState(AppState.PermissionDenied);
+          }}
+          requestCam={requestCam}
+          requestScreen={requestScreen}
+        />
+      );
+    } else if (appState === AppState.PermissionDenied) {
+      return (
+        <div className={styles["permission-denied-container"]}>
+          <h1>Permission Denied 😅</h1>
+          <h3>No worries! Refresh page to try again.</h3>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.container}>
+      {renderContent()}
+      <div className={styles.github}>
+        <AiFillGithub size="3em" />
+      </div>
     </div>
   );
 }
