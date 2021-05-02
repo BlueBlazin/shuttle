@@ -36,7 +36,9 @@ function App() {
       );
     } else if (appState === AppState.Recording) {
       // @ts-ignore
-      const { x, y } = webcamPlacementRef.current?.getBoundingClientRect();
+      const { x, y } = requestCam
+        ? webcamPlacementRef.current?.getBoundingClientRect()
+        : { x: 0, y: 0 };
 
       return (
         <Record

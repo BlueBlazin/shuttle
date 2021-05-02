@@ -41,41 +41,45 @@ function Record({
       const width = canvas.width;
       const height = canvas.height;
 
-      ctx?.drawImage(screenVideo, 0, 0, width, height);
+      if (useScreen) {
+        ctx?.drawImage(screenVideo, 0, 0, width, height);
+      }
 
-      ctx?.beginPath();
+      if (useCam) {
+        ctx?.beginPath();
 
-      // const radius = height / 8;
-      const radius = 100;
+        // const radius = height / 8;
+        const radius = 100;
 
-      // ctx?.arc(radius, height - radius, radius, 0, Math.PI * 2, false);
+        // ctx?.arc(radius, height - radius, radius, 0, Math.PI * 2, false);
 
-      let x = (camPosition.x * canvas.width) / window.innerWidth;
-      let y = (camPosition.y * canvas.height) / window.innerHeight;
+        let x = (camPosition.x * canvas.width) / window.innerWidth;
+        let y = (camPosition.y * canvas.height) / window.innerHeight;
 
-      ctx?.arc(x + radius, y + radius, radius, 0, Math.PI * 2, false);
-      ctx?.clip();
+        ctx?.arc(x + radius, y + radius, radius, 0, Math.PI * 2, false);
+        ctx?.clip();
 
-      const aspectRatio = canvas.width / canvas.height;
-      const newHeight = 2 * radius;
-      const newWidth = newHeight * aspectRatio;
-      const newX = x - (newWidth / 2 - radius);
+        const aspectRatio = canvas.width / canvas.height;
+        const newHeight = 2 * radius;
+        const newWidth = newHeight * aspectRatio;
+        const newX = x - (newWidth / 2 - radius);
 
-      // ctx?.drawImage(
-      //   webcamVideo,
-      //   radius * (1 - aspectRatio),
-      //   height - 2 * radius,
-      //   aspectRatio * 2 * radius,
-      //   2 * radius
-      // );
-      ctx?.drawImage(
-        webcamVideo,
-        newX,
-        y,
-        newWidth,
-        // aspectRatio * 2 * radius,
-        newHeight
-      );
+        // ctx?.drawImage(
+        //   webcamVideo,
+        //   radius * (1 - aspectRatio),
+        //   height - 2 * radius,
+        //   aspectRatio * 2 * radius,
+        //   2 * radius
+        // );
+        ctx?.drawImage(
+          webcamVideo,
+          newX,
+          y,
+          newWidth,
+          // aspectRatio * 2 * radius,
+          newHeight
+        );
+      }
 
       ctx?.restore();
     }
